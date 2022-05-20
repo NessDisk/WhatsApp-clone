@@ -4,15 +4,44 @@ import {Avatar , IconButton} from "@material-ui/core"
 
 import { AttachFile , InsertEmoticon, MoreVert, SearchOutlined} from '@material-ui/icons' 
 import MicIcon  from "@material-ui/icons/Mic"
+import { useParams } from 'react-router-dom'
+import { getDatabase, ref, onValue} from "firebase/database";
+
+
+
 
 
 function Chat() {
 
     const [input  , setInput] = useState("");
     const [seed , setSeed] = useState("");
+    let {roomId} = useParams();
+    const [roomName , SetRoomName] = useState();
 
-    useEffect(
+    useEffect(()=>{
+
+if(roomId){
+    const db = getDatabase();
+    const starCountRef = ref(db,"/rooms/"+roomId);
+    onValue(starCountRef, (snapshot) => {
+        const data = snapshot.val();
+        if(data !== null){
+        // value = Object.keys(data);
+        // data.doc
+        console.log(data);
+    
+        SetRoomName(data.name)
+    }
+       
+     });
+}}
+    ,[roomId])
+
+
+    //ramdon avatar
+    useEffect(        
         ()=>{
+              
             setSeed(Math.floor(Math.random()*5000))
         }
         ,[]
@@ -21,7 +50,7 @@ function Chat() {
     const SendMessage =(e) =>{      
 e.preventDefault()
 console.log("Hola mundo tu esctiro es >>> "+ input)
-console.log()
+setInput("")
     }
 
   return (
@@ -32,7 +61,7 @@ console.log()
             <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
         
         <div className='chat__headerInfo'>
-                <h3>Room name</h3>
+                <h3>{roomName}</h3>
                 <p> last seen  at...</p>
           
         </div>
