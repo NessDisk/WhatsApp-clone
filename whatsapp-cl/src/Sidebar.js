@@ -10,6 +10,7 @@ import database from './firebase'
 // import db from './firebase'
 
 import { getDatabase, ref, onValue} from "firebase/database";
+import { useStateValue } from './StateProvider'
 // import { getDatabase } from "firebase/database";
 
 
@@ -17,6 +18,7 @@ import { getDatabase, ref, onValue} from "firebase/database";
 function Sidebar() {
 
 const [rooms, setRooms] = useState([]);
+const [{user}, dispatch] = useStateValue();
 
 useEffect(() =>{
 // db.collection("rooms").onSnapshot(onSnapshot => (
@@ -26,7 +28,7 @@ useEffect(() =>{
 //     })))
 // ))
 
-
+// console.log(user?.photoURL)
 // let value ;
 const db = getDatabase();
 const starCountRef = ref(db,"/rooms");
@@ -46,17 +48,18 @@ onValue(starCountRef, (snapshot) => {
   return (
     <div className='sidebar'>
     <div className='sidebar__header'>
-    <Avatar/>
+   {user?   <Avatar src={user.photoURL} />:
+            <Avatar />}
 <div className='sidebar__headerRight'>
 
     <IconButton>
-        <DonutLargeIcon/>
+           <DonutLargeIcon/>
     </IconButton>
     <IconButton>
-        <ChatIcon/>
+          <ChatIcon/>
     </IconButton>
     <IconButton>
-        <MoreVertIcon/>
+          <MoreVertIcon/>
     </IconButton>
 </div>
 
@@ -81,19 +84,6 @@ onValue(starCountRef, (snapshot) => {
             return <SideBarChat  key={room[0]} id={room[0]} name={room[1].name}/>
         })
     }
-
-
-
-    {/* <SideBarChat /> */}
-    {/* <SideBarChat/>
-    <SideBarChat/>
-    <SideBarChat/>
-    <SideBarChat/> */}
-  
-
-
-
-
     </div>
     </div>
 

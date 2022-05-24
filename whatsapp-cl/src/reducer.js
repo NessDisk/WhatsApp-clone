@@ -14,8 +14,9 @@ const reducer = (state, action) => {
 
     switch(action.type){
         
-        case actionsType.Set_USER:
+        case actionsType.SET_USER:
            
+        console.log("Hola mundo aqui")
             return{
                 ...state,
                 user: action.user,

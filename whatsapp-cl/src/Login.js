@@ -3,11 +3,15 @@ import "./Login.css"
 import {Button} from "@material-ui/core"
 import { provider} from "./firebase" ;
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useStateValue } from './StateProvider';
+import { actionsType } from './reducer';
 
 function Login() {
-
+  const [{}, dispatch] = useStateValue();
+  
 const SignIn = ()=>{
- 
+
+
   const auth = getAuth();
 signInWithPopup(auth, provider)
   .then((result) => {
@@ -18,7 +22,10 @@ signInWithPopup(auth, provider)
     const user = result.user;
     // ...
     console.log(result)
-
+    dispatch({
+      type: actionsType.SET_USER,
+      user:  result.user,
+    })
   }).catch((error) => {
     // Handle Errors here.
     const errorCode = error.code;
@@ -36,7 +43,7 @@ signInWithPopup(auth, provider)
         <div className='login___container'>
             <img src='https://cdn.icon-icons.com/icons2/840/PNG/512/Whatsapp_icon-icons.com_66931.png' alt=""/>
             <div className='login__text'>
-              <h1> Registrate para WhatsApp</h1>
+              <h1> Registrate para WhatsApp</h1>            
             </div>
 
 

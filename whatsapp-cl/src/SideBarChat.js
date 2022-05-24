@@ -3,7 +3,7 @@ import "./SideBarChat.css"
 import {Avatar} from "@material-ui/core"
 
 // import { getDatabase, ref, set } from "firebase/database";
-   import { getDatabase, ref, push, set } from "firebase/database";
+import { getDatabase, ref, onValue, push, set} from "firebase/database";
 import { Link } from 'react-router-dom';
 
 
@@ -11,6 +11,23 @@ import { Link } from 'react-router-dom';
 
 function SideBarChat({id, name,addNewchat}) {
     const [seed , setSeed] = useState("");
+    const [mensseges , setmensseges] = useState({});
+    const [Lastmensseges , setLastmensseges] = useState("");
+    useEffect(()=>{
+        const db = getDatabase();
+        const starCountRef = ref(db,"/rooms/"+id);
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val();
+            if(data !== null){
+       
+           
+           if(data.menssages)
+            {setmensseges(data.menssages)           
+            }
+            
+        }       
+         });
+    },[id])
 
     useEffect(
         ()=>{
@@ -44,7 +61,8 @@ function SideBarChat({id, name,addNewchat}) {
         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
         <div className='sidebarChat__info'>
             <h2>{name}</h2>
-            <p>Last message...</p>
+       
+             <p className='overflow-ellipsis'>{Object.entries(mensseges)[Object.keys(mensseges).length - 1]? Object.entries(mensseges)[Object.keys(mensseges).length - 1][1].menssage :""}</p> 
         </div>
     </div>
     </Link>

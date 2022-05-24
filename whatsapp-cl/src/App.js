@@ -5,6 +5,7 @@ import Sidebar from './Sidebar';
 import Chat from "./Chat.js"
 import {BrowserRouter  as Router, Switch ,  Route } from "react-router-dom";
 import Login from './Login';
+import { useStateValue } from './StateProvider';
 
 
 
@@ -12,7 +13,13 @@ import Login from './Login';
 
 function App() {
 
-  const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(null)
+  const [{user}, dispatch] = useStateValue();
+
+  useEffect(()=>{
+console.log(user)
+  },[user])
+
 
   return (
     //Example BEM naming convention

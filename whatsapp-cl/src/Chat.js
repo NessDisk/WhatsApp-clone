@@ -5,7 +5,10 @@ import {Avatar , IconButton} from "@material-ui/core"
 import { AttachFile , InsertEmoticon, MoreVert, SearchOutlined} from '@material-ui/icons' 
 import MicIcon  from "@material-ui/icons/Mic"
 import { useParams } from 'react-router-dom'
-import { getDatabase, ref, onValue} from "firebase/database";
+import { getDatabase, ref, onValue, push, set} from "firebase/database";
+
+import { updateDoc, serverTimestamp } from "firebase/firestore";
+import { useStateValue } from './StateProvider'
 
 
 
@@ -16,7 +19,10 @@ function Chat() {
     const [input  , setInput] = useState("");
     const [seed , setSeed] = useState("");
     let {roomId} = useParams();
-    const [roomName , SetRoomName] = useState();
+    const [roomName , setRoomName] = useState();
+    const [mensseges , setmensseges] = useState({});
+    const [lastSeen , setLastSeen] = useState("");
+    const[{user}, dispatch] = useStateValue();
 
     useEffect(()=>{
 
@@ -28,11 +34,13 @@ if(roomId){
         if(data !== null){
         // value = Object.keys(data);
         // data.doc
-        console.log(data);
-    
-        SetRoomName(data.name)
-    }
+        // console.log( Object.entries(data.menssages)[Object.keys(data.menssages).length - 1][1].timestamp);
        
+        setRoomName(data.name)
+        setmensseges(data.menssages)
+        if(data.menssages)
+        setLastSeen(Object.entries(data.menssages)[Object.keys(data.menssages).length - 1][1].timestamp)
+    }       
      });
 }}
     ,[roomId])
@@ -43,6 +51,9 @@ if(roomId){
         ()=>{
               
             setSeed(Math.floor(Math.random()*5000))
+
+            if(!mensseges)
+            setmensseges( Object.entries(mensseges)[Object.keys(mensseges).length - 1][1].timestamp)
         }
         ,[]
     );
@@ -50,6 +61,33 @@ if(roomId){
     const SendMessage =(e) =>{      
 e.preventDefault()
 console.log("Hola mundo tu esctiro es >>> "+ input)
+// console.log(mensseges.length )
+
+const db = getDatabase();
+const postListRef = ref(db, 'posts');
+const newPostRef = push(postListRef);
+
+var today = new Date()
+
+// const name = user.displayName;
+
+set(push(ref(db, `rooms/${roomId}/menssages/`)), {
+    
+    
+         name: user.displayName,
+         menssage:input,
+         timestamp: today.getHours() + ':' +  today.getUTCMinutes()
+  
+});
+
+// console.log(Object.entries(mensseges)[Object.keys(mensseges).length - 1][1].timestamp)
+
+// if( mensseges !== undefined ){
+//     // console.log(Object.entries(mensseges)[Object.keys(mensseges).length - 1][1].timestamp)
+//     setLastSeen(Object.entries(mensseges)[Object.keys(mensseges).length - 1][1].timestamp)
+// }
+
+
 setInput("")
     }
 
@@ -61,8 +99,10 @@ setInput("")
             <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
         
         <div className='chat__headerInfo'>
-                <h3>{roomName}</h3>
-                <p> last seen  at...</p>
+                {/* <h3>{roomName}</h3> */}
+                {/* {Object.entries(mensseges)[Object.keys(mensseges).length - 1][1]?.timestamp} */}
+                {/* <p> { Object.entries(mensseges)[Object.keys(mensseges).length - 1]}</p> */}
+               <p>  {mensseges? "last seen "+ lastSeen : "last seen at..."} </p>
           
         </div>
         <div className='chat__headerRight'>
@@ -83,11 +123,32 @@ setInput("")
 
     <div className='chat__body'>
         
-        <p className={`chat__message ${true && "chat__reciever"}`}> 
+     
+        { mensseges?   Object.entries(mensseges).map((msg, i) => {
+            // console.log(msg[1]);
+           
+               
+                // return <SideBarChat  key={room[0]} id={room[0]} name={room[1].name}/>
+            //   return <div><h1>{msg[1].menssage}</h1> </div>
+          return <div>  <p className={`chat__message ${
+               msg[1].name === user.displayName
+              && "chat__reciever"}`}> 
+        <span className='chat__name'>{msg[1].name}</span>
+      
+       {msg[1].menssage}
+        <span className='chat__timestamp'>{msg[1].timestamp}</span>
+        </p> 
+        <br/>
+        </div>
+                         
+            }) :<></>
+        }
+         
+        {/* <p className={`chat__message ${true && "chat__reciever"}`}> 
         <span className='chat__name'>Nestor</span>
         Hey Guys 
         <span className='chat__timestamp'>3:30pm</span>
-        </p>
+        </p> */}
     </div>
     
     <div className='chat__footer'>
