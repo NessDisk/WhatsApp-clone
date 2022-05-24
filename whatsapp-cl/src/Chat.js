@@ -99,7 +99,7 @@ setInput("")
             <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
         
         <div className='chat__headerInfo'>
-                {/* <h3>{roomName}</h3> */}
+                <h3>{roomName}</h3>
                 {/* {Object.entries(mensseges)[Object.keys(mensseges).length - 1][1]?.timestamp} */}
                 {/* <p> { Object.entries(mensseges)[Object.keys(mensseges).length - 1]}</p> */}
                <p>  {mensseges? "last seen "+ lastSeen : "last seen at..."} </p>
