@@ -68,7 +68,7 @@ onValue(starCountRef, (snapshot) => {
     <div className='sidebar__search' >
 <div className='sidebar__searchContainer'>
     <SearchOutlined/>
-    <input placeholder='Busca o inicia nevo chat ' type="text"/>
+    <input placeholder='Busca o inicia nuevo chat ' type="text"/>
 </div>
 
     </div>
