@@ -1,5 +1,5 @@
 # WhatsApp-clone
-Step to run the proyect.
+Steps to run the proyect.
 in console
 - cd whatsapp-cl
 - npm i
